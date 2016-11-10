@@ -6,38 +6,38 @@ import android.hardware.SensorEventListener;
 
 public class StepDetector implements SensorEventListener{
 	private StepCount stepCount;
-	float[] oriValues = new float[3];  
-	final int valueNum = 4;
+	private float[] oriValues = new float[3];
+	private final int valueNum = 4;
 	//用于存放计算阈值的波峰波谷差值
-	float[] tempValue = new float[valueNum];
-	int tempCount = 0;
+	private float[] tempValue = new float[valueNum];
+	private int tempCount = 0;
 
 	//是否上升的标志位
-	boolean isDirectionUp = false;
+	private boolean isDirectionUp = false;
 	//持续上升次数
-	int continueUpCount = 0;
+	private int continueUpCount = 0;
 	//上一点的持续上升的次数，为了记录波峰的上升次数
-	int continueUpFormerCount = 0;
+	private int continueUpFormerCount = 0;
 	//上一点的状态，上升还是下降
-	boolean lastStatus = false;
+	private boolean lastStatus = false;
 	//波峰值
-	float peakOfWave = 0;
+	private float peakOfWave = 0;
 	//波谷值
-	float valleyOfWave = 0;
+	private float valleyOfWave = 0;
 	//此次波峰的时间
-	long timeOfThisPeak = 0;
+	private long timeOfThisPeak = 0;
 	//上次波峰的时间
-	long timeOfLastPeak = 0;
+	private long timeOfLastPeak = 0;
 	//当前的时间
-	long timeOfNow = 0;
+	private long timeOfNow = 0;
 	//当前传感器的值
-	float gravityNew = 0;
+	private float gravityNew = 0;
 	//上次传感器的值
-	float gravityOld = 0;
+	private float gravityOld = 0;
 	//动态阈值需要动态的数据，这个值用于这些动态数据的阈值
-	final float initialValue = (float) 1.3;
+	private final float initialValue = (float) 1.3;
 	//初始阈值
-	float ThreadValue = (float) 2.0;
+	private float ThreadValue = (float) 2.0;
 	public StepDetector(StepCount sc){
 		this.stepCount = sc;
 		for(int i = 0; i < tempValue.length; i++)
@@ -51,7 +51,6 @@ public class StepDetector implements SensorEventListener{
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		// TODO Auto-generated method stub
 		for(int i = 0; i < 3; i++){
 			oriValues[i] = event.values[i];
 		}

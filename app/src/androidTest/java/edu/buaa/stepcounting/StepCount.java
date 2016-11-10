@@ -5,6 +5,7 @@ public class StepCount {
 	private int count = 0;
 	long TimeofThisPeak = System.currentTimeMillis();
 	long TimeofLastPeak = System.currentTimeMillis();
+	private StepValuePassListener mStepValuePassListener;
 	public void setSteps(int s){
 		this.mCount = s;
 	}
@@ -20,7 +21,15 @@ public class StepCount {
 				count = 1;
 			count++;
 		}
-		else
+		else {
 			mCount++;
+			notifyListener();
+		}
+	}
+	public void registerListener(StepValuePassListener stepValuePassListener){
+		this.mStepValuePassListener = stepValuePassListener;
+	}
+	public void notifyListener(){
+		mStepValuePassListener.stepsChanged(mCount);
 	}
 }
