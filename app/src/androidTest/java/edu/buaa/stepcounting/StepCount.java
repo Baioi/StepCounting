@@ -1,4 +1,4 @@
-package com.stepcounting;
+package edu.buaa.stepcounting;
 
 public class StepCount {
 	private int mCount = 0;

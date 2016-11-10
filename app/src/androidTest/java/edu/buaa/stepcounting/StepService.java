@@ -1,6 +1,7 @@
-package com.stepcounting;
+package edu.buaa.stepcounting;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -25,29 +26,29 @@ public class StepService extends Service {
 	}
 	public void onCreate(){
 		super.onCreate();
-		//»ñµÃ»½ĞÑËø£¬½øÈë³£ÁÁ×´Ì¬
-		this.wakeLock = ((PowerManager)getSystemService("power")).newWakeLock(1, "StepCount");
+		//è·å¾—å”¤é†’é”ï¼Œè¿›å…¥å¸¸äº®çŠ¶æ€
+		this.wakeLock = ((PowerManager)getSystemService(Context.POWER_SERVICE)).newWakeLock(1, "StepCount");
 		this.wakeLock.acquire();
 		//this.mStepDetector = new StepDetector();
-		this.sensorManager = (SensorManager)getSystemService("SENSOR_SERVICE");
-		//G-Sensor£¬ÀàĞÍÖµÎª1
+		this.sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+		////G-Sensorï¼Œç±»å‹å€¼ä¸º1
 		this.sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		this.sensorManager.registerListener(this.mStepDetector, this.sensor, 
 				SensorManager.SENSOR_DELAY_UI);
-		//³õÊ¼»¯¼Æ²½Æ÷¡¢¼ì²â²½Êı
+		//åˆå§‹åŒ–è®¡æ­¥å™¨ã€æ£€æµ‹æ­¥æ•°
 		stepCount = new StepCount();
 		mStepDetector = new StepDetector(stepCount);
 	}
 	protected void onPause(){
 		super.onDestroy();
-		//ÊÍ·Å»½ĞÑËø
+		//é‡Šæ”¾å”¤é†’é”
 		wakeLock.release();
 	}
 	public void onDestroy(){
 		this.sensorManager.unregisterListener(this.mStepDetector);
 		this.wakeLock.release();
 		super.onDestroy();
-		//???ÎªÊ²Ã´ÓÖÆô¶¯£¿
+		//???ä¸ºä»€ä¹ˆåˆå¯åŠ¨ï¼Ÿä¿æŒåå°è¿è¡Œï¼Ÿ
 		startService(new Intent(this, StepService.class));
 	}
 	public int onStartCommand(Intent intent, int flags, int startId){
@@ -71,5 +72,8 @@ class MyBinder extends Binder{
 	public void startWork(){
 		Log.d("TAG", "Work excuting");
 		//Jobs to do
+	}
+	StepService getService(){
+		return
 	}
 }
