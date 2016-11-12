@@ -1,4 +1,4 @@
-package edu.buaa.stepcounting;
+package edu.buaa.stepcounting.stepService;
 
 /**
  * Created by LiangBaoyu on 2016/11/10.

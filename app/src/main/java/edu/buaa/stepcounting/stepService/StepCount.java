@@ -1,10 +1,10 @@
-package edu.buaa.stepcounting;
+package edu.buaa.stepcounting.stepService;
 
 public class StepCount {
 	private int mCount = 0;
 	private int count = 0;
-	long TimeofThisPeak = System.currentTimeMillis();
-	long TimeofLastPeak = System.currentTimeMillis();
+	long TimeofThisPeak = 0;
+	long TimeofLastPeak = 0;
 	private StepValuePassListener mStepValuePassListener;
 	public void setSteps(int s){
 		this.mCount = s;

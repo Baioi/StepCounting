@@ -1,42 +1,46 @@
-package edu.buaa.stepcounting;
+package edu.buaa.stepcounting.stepService;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.util.Log;
+
+import edu.buaa.stepcounting.Main3Activity;
+import edu.buaa.stepcounting.stepService.StepCount;
 
 public class StepDetector implements SensorEventListener{
 	private StepCount stepCount;
 	private float[] oriValues = new float[3];
 	private final int valueNum = 4;
-	//用于存放计算阈值的波峰波谷差值
+
 	private float[] tempValue = new float[valueNum];
 	private int tempCount = 0;
 
-	//是否上升的标志位
+
 	private boolean isDirectionUp = false;
-	//持续上升次数
+
 	private int continueUpCount = 0;
-	//上一点的持续上升的次数，为了记录波峰的上升次数
+
 	private int continueUpFormerCount = 0;
-	//上一点的状态，上升还是下降
+
 	private boolean lastStatus = false;
-	//波峰值
+
 	private float peakOfWave = 0;
-	//波谷值
+
 	private float valleyOfWave = 0;
-	//此次波峰的时间
+
 	private long timeOfThisPeak = 0;
-	//上次波峰的时间
+
 	private long timeOfLastPeak = 0;
-	//当前的时间
+
 	private long timeOfNow = 0;
-	//当前传感器的值
+
 	private float gravityNew = 0;
-	//上次传感器的值
+
 	private float gravityOld = 0;
-	//动态阈值需要动态的数据，这个值用于这些动态数据的阈值
-	private final float initialValue = (float) 1.3;
-	//初始阈值
+
+	private final float initialValue = (float) 1.7;
+
 	private float ThreadValue = (float) 2.0;
 	public StepDetector(StepCount sc){
 		this.stepCount = sc;
@@ -59,6 +63,7 @@ public class StepDetector implements SensorEventListener{
 		DetectorNewStep(gravityNew);
 	}
 	public void DetectorNewStep(float values){
+		Log.d("gravityNew:", gravityNew+"");
 		if(gravityOld == 0)
 			gravityOld = values;
 		else{
@@ -77,19 +82,9 @@ public class StepDetector implements SensorEventListener{
                 }
 			}
 		}
-
+		gravityOld = values;
 	}
-	/*
 
-	* 阈值的计算
-
-	* 1.通过波峰波谷的差值计算阈值
-
-	* 2.记录4个值，存入tempValue[]数组中
-
-	* 3.在将数组传入函数averageValue中计算阈值
-
-	* */
 	private float Peak_Valley_Thread(float value) {
 		// TODO Auto-generated method stub
 		float tempThread = ThreadValue;  
@@ -128,9 +123,10 @@ public class StepDetector implements SensorEventListener{
 	private boolean DetectorPeak(float newValue, float oldValue) {
 		// TODO Auto-generated method stub
 		lastStatus = isDirectionUp;
-		this.continueUpCount++;
-		if(newValue > oldValue){
+
+		if(newValue >= oldValue){
 			isDirectionUp = true;
+			this.continueUpCount++;
 			return true;
 		} else{
 			this.continueUpFormerCount = this.continueUpCount;
@@ -138,7 +134,8 @@ public class StepDetector implements SensorEventListener{
 			isDirectionUp = false;
 		}
 		
-		if(!isDirectionUp && lastStatus && (continueUpFormerCount >= 2 || oldValue >= 20)) {
+		if(!isDirectionUp && lastStatus && (continueUpFormerCount >= 2
+				&& (oldValue >= 11.76 && oldValue < 19.6))) {
 			this.peakOfWave = oldValue;
 			return true;
 		} else if(isDirectionUp && !lastStatus) {
