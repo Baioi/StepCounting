@@ -2,7 +2,7 @@ package edu.buaa.stepcounting.stepService;
 
 public class StepCount {
 	private int mCount = 0;
-	public int count = 0;
+	private int count = 0;
 	long TimeofThisPeak = 0;
 	long TimeofLastPeak = 0;
 	private StepValuePassListener mStepValuePassListener;
