@@ -54,7 +54,7 @@ public class StepDetector implements SensorEventListener{
 	}
 
 	@Override
-	public void onSensorChanged(SensorEvent event) {
+		public void onSensorChanged(SensorEvent event) {
 		for(int i = 0; i < 3; i++){
 			oriValues[i] = event.values[i];
 		}
@@ -127,7 +127,6 @@ public class StepDetector implements SensorEventListener{
 		if(newValue >= oldValue){
 			isDirectionUp = true;
 			this.continueUpCount++;
-			return true;
 		} else{
 			this.continueUpFormerCount = this.continueUpCount;
 			continueUpCount = 0;
@@ -135,7 +134,7 @@ public class StepDetector implements SensorEventListener{
 		}
 		
 		if(!isDirectionUp && lastStatus && (continueUpFormerCount >= 2
-				|| (oldValue >= 11.76 && oldValue < 19.6))) {
+			&&  (oldValue >= 11.9 && oldValue < 40.0)) ){
 			this.peakOfWave = oldValue;
 			return true;
 		} else if(isDirectionUp && !lastStatus) {

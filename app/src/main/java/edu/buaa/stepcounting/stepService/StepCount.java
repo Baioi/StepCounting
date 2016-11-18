@@ -19,7 +19,8 @@ public class StepCount {
 		else if(this.count < 10){
 			if(TimeofThisPeak - TimeofLastPeak >= 3000)
 				count = 1;
-			count++;
+			else
+				count++;
 		}
 		else {
 			mCount++;

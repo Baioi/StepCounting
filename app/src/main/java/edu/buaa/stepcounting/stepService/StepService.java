@@ -100,13 +100,12 @@ public class StepService extends Service {
 		exerciseRecord.setMonth(c.get(Calendar.MONTH)+1);
 		exerciseRecord.setYear(c.get(Calendar.YEAR));
 
-		/*List<ExerciseRecord> list = (List<ExerciseRecord>)dbhelper.search(ExerciseRecord.class,
+		List<ExerciseRecord> list = (List<ExerciseRecord>)dbhelper.search(ExerciseRecord.class,
 				new String[]{ExerciseRecord.keys.year, ExerciseRecord.keys.month, ExerciseRecord.keys.day} ,
 				new String[]{String.valueOf(exerciseRecord.getYear()), String.valueOf(exerciseRecord.getMonth()), String.valueOf(exerciseRecord.getDay())});
 		for(int i = 0; i < list.size(); i++){
 			stepBefore += list.get(i).getStep();
-		}*/
-		stepBefore = 0;
+		}
 		//this.wakeLock = ((PowerManager)getSystemService(Context.POWER_SERVICE)).newWakeLock(1, "StepCount");
 		//this.wakeLock.acquire();
 		//this.mStepDetector = new StepDetector();
@@ -118,6 +117,7 @@ public class StepService extends Service {
 		mStepDetector = new StepDetector(stepCount);
 		this.sensorManager.registerListener(this.mStepDetector, this.sensor, 
 				SensorManager.SENSOR_DELAY_UI);
+				//SensorManager.SENSOR_DELAY_FASTEST);
 		this.mHandler = ((MyApp)getApplication()).getMyHandler();
 		//初始化计步器、检测步数
 
