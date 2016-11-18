@@ -30,22 +30,35 @@ public class StepService extends Service {
 	private StepCount stepCount;
 	private int mStep;
 	private int stepBefore = 0;
-	private Context context;
 	private StepDetector mStepDetector;
 	private ExerciseRecord exerciseRecord;
-	private DatabaseHelper dbhelper = new DatabaseHelper(context);
+	private DatabaseHelper dbhelper = new DatabaseHelper(StepService.this);
 	private Calendar c = Calendar.getInstance();
-	private Main3Activity.MyHandler mHandler;
+	//private Main3Activity.MyHandler mHandler;
 	private StepValuePassListener mStepValuePassListener = new StepValuePassListener() {
 		@Override
 		public void stepsChanged(int n) {
 			mStep = n;
 			//发送信息
-			Bundle bundle = new Bundle();
-			bundle.putInt("steps",mStep+stepBefore);
-			Message msg = new Message();
-			msg.setData(bundle);
-			mHandler.sendMessage(msg);
+			//Bundle bundle = new Bundle();
+			//bundle.putInt("steps",mStep+stepBefore);
+			Intent intent = new Intent("edu.buaa.stepcounting");
+			intent.putExtra("data", mStep+stepBefore);
+			System.out.println("");
+			System.out.println("update!");
+			sendBroadcast(intent);
+			exerciseRecord.setStep(mStep);
+			dbhelper.update(exerciseRecord);
+			int stepBefore1 = 0;
+			List<ExerciseRecord> list = (List<ExerciseRecord>)dbhelper.search(ExerciseRecord.class,
+					new String[]{ExerciseRecord.keys.year, ExerciseRecord.keys.month, ExerciseRecord.keys.day} ,
+					new String[]{String.valueOf(exerciseRecord.getYear()), String.valueOf(exerciseRecord.getMonth()), String.valueOf(exerciseRecord.getDay())});
+			for(int i = 0; i < list.size(); i++) {
+				stepBefore1 += list.get(i).getStep();
+			}
+			//Message msg = new Message();
+			//msg.setData(bundle);
+			//mHandler.sendMessage(msg);
 		}
 
 		@Override
@@ -103,9 +116,11 @@ public class StepService extends Service {
 		List<ExerciseRecord> list = (List<ExerciseRecord>)dbhelper.search(ExerciseRecord.class,
 				new String[]{ExerciseRecord.keys.year, ExerciseRecord.keys.month, ExerciseRecord.keys.day} ,
 				new String[]{String.valueOf(exerciseRecord.getYear()), String.valueOf(exerciseRecord.getMonth()), String.valueOf(exerciseRecord.getDay())});
-		for(int i = 0; i < list.size(); i++){
+		for(int i = 0; i < list.size(); i++) {
 			stepBefore += list.get(i).getStep();
 		}
+		//this.mHandler = ((MyApp)getApplication()).getMyHandler();
+		mStepValuePassListener.stepsChanged(0);
 		//this.wakeLock = ((PowerManager)getSystemService(Context.POWER_SERVICE)).newWakeLock(1, "StepCount");
 		//this.wakeLock.acquire();
 		//this.mStepDetector = new StepDetector();
@@ -118,7 +133,7 @@ public class StepService extends Service {
 		this.sensorManager.registerListener(this.mStepDetector, this.sensor, 
 				SensorManager.SENSOR_DELAY_UI);
 				//SensorManager.SENSOR_DELAY_FASTEST);
-		this.mHandler = ((MyApp)getApplication()).getMyHandler();
+		//this.mHandler = ((MyApp)getApplication()).getMyHandler();
 		//初始化计步器、检测步数
 
 
@@ -136,10 +151,11 @@ public class StepService extends Service {
 		//释放唤醒锁
 		wakeLock.release();
 	}
+
+
+	@Override
 	public void onDestroy(){
 		//将mStep加入数据库
-		exerciseRecord.setStep(mStep);
-		dbhelper.insert(exerciseRecord);
 		this.sensorManager.unregisterListener(this.mStepDetector);
 		this.wakeLock.release();
 		super.onDestroy();

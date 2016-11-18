@@ -9,11 +9,11 @@ import edu.buaa.stepcounting.Main3Activity;
  */
 
 public class MyApp extends Application {
-    private Main3Activity.MyHandler myHandler = null;
-    public void setMyHandler(Main3Activity.MyHandler handler){
-        myHandler = handler;
-    }
-    public Main3Activity.MyHandler getMyHandler(){
-        return this.myHandler;
-    }
+//    private Main3Activity.MyHandler myHandler = null;
+ //   public void setMyHandler(Main3Activity.MyHandler handler){
+ //       myHandler = handler;
+   // }
+    //public Main3Activity.MyHandler getMyHandler(){
+    //    return this.myHandler;
+   // }
 }
