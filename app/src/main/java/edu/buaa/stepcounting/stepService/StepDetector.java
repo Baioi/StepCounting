@@ -127,7 +127,6 @@ public class StepDetector implements SensorEventListener{
 		if(newValue >= oldValue){
 			isDirectionUp = true;
 			this.continueUpCount++;
-			return true;
 		} else{
 			this.continueUpFormerCount = this.continueUpCount;
 			continueUpCount = 0;
@@ -138,10 +137,10 @@ public class StepDetector implements SensorEventListener{
 				&& (oldValue >= 11.76 && oldValue < 19.6))) {
 			this.peakOfWave = oldValue;
 			return true;
-		} else if(isDirectionUp && !lastStatus) {
+		}
+		if(isDirectionUp && !lastStatus) {
 			valleyOfWave = oldValue;
-			return false;
-		} else
+		}
 			return false;
 			
 	}
