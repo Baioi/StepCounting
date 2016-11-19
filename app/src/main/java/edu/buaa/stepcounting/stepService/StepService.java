@@ -47,18 +47,20 @@ public class StepService extends Service {
 			System.out.println("");
 			System.out.println("update!");
 			sendBroadcast(intent);
-			exerciseRecord.setStep(mStep);
-			dbhelper.update(exerciseRecord);
-			int stepBefore1 = 0;
-			List<ExerciseRecord> list = (List<ExerciseRecord>)dbhelper.search(ExerciseRecord.class,
-					new String[]{ExerciseRecord.keys.year, ExerciseRecord.keys.month, ExerciseRecord.keys.day} ,
-					new String[]{String.valueOf(exerciseRecord.getYear()), String.valueOf(exerciseRecord.getMonth()), String.valueOf(exerciseRecord.getDay())});
-			for(int i = 0; i < list.size(); i++) {
-				stepBefore1 += list.get(i).getStep();
-			}
+
 			//Message msg = new Message();
 			//msg.setData(bundle);
 			//mHandler.sendMessage(msg);
+
+			exerciseRecord.setStep(mStep+stepBefore);
+			System.err.println("starttttt insert");
+			System.err.println("size:"+dbhelper.search(ExerciseRecord.class).size());
+			System.err.println(((ExerciseRecord)dbhelper.search(ExerciseRecord.class).get(0)).getStep());
+			System.err.println(exerciseRecord.getStep());
+			ExerciseRecord r = ((ExerciseRecord)dbhelper.search(ExerciseRecord.class).get(0));
+			System.err.println("insertID"+exerciseRecord.getId()+" DBiD"+r.getId());
+			dbhelper.update(exerciseRecord);
+
 		}
 
 		@Override
@@ -105,6 +107,7 @@ public class StepService extends Service {
 	}*/
 	public void onCreate(){
 		super.onCreate();
+		//this.deleteDatabase(DatabaseHelper.databaseName);
 		//获得唤醒锁，进入常亮状态
 		//从数据库中读取当天已行走的步数，若无数据，添加计步量为0
 		Log.d("hello", "Service onCreate: ");
@@ -112,12 +115,18 @@ public class StepService extends Service {
 		exerciseRecord.setDay(c.get(Calendar.DAY_OF_MONTH));
 		exerciseRecord.setMonth(c.get(Calendar.MONTH)+1);
 		exerciseRecord.setYear(c.get(Calendar.YEAR));
-
 		List<ExerciseRecord> list = (List<ExerciseRecord>)dbhelper.search(ExerciseRecord.class,
 				new String[]{ExerciseRecord.keys.year, ExerciseRecord.keys.month, ExerciseRecord.keys.day} ,
 				new String[]{String.valueOf(exerciseRecord.getYear()), String.valueOf(exerciseRecord.getMonth()), String.valueOf(exerciseRecord.getDay())});
 		for(int i = 0; i < list.size(); i++) {
 			stepBefore += list.get(i).getStep();
+		}
+		if(list.size() == 0){
+			exerciseRecord.setStep(0);
+			dbhelper.insert(exerciseRecord);
+		}
+		else {
+			exerciseRecord = list.get(0);
 		}
 		//this.mHandler = ((MyApp)getApplication()).getMyHandler();
 		mStepValuePassListener.stepsChanged(0);
@@ -156,10 +165,11 @@ public class StepService extends Service {
 	@Override
 	public void onDestroy(){
 		//将mStep加入数据库
-		this.sensorManager.unregisterListener(this.mStepDetector);
+		//this.sensorManager.unregisterListener(this.mStepDetector);
 		this.wakeLock.release();
 		super.onDestroy();
 		startService(new Intent(this, StepService.class));
+
 	}
 	public void resetValues(){
 	    this.stepCount.setSteps(0);
